@@ -1,6 +1,9 @@
 package com.embian.edgedetectionsample;
 
 import org.junit.Test;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +14,14 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void card_recognizer_test() {
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        System.loadLibrary("libs/opencv_java4");
+        System.loadLibrary("libopencv_java4.so");
+        CardRecognizer recognizer = new CardRecognizer();
+        Mat src = Imgcodecs.imread("d:\\chae.jpg");
+        Mat dst = recognizer.BoundaryDetection(src);
+        Imgcodecs.imwrite("chae-result.jpg", dst);
+        assertNotNull(dst);
     }
 }

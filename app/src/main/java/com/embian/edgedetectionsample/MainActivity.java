@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Edge Analyze is called");
         Mat src = cardRecognizer.ImageToMat(image);
         src = cardRecognizer.CenterCropTransform(src, binding.viewFinder);
-        Mat edge = cardRecognizer.EdgeDetection(src);
+        Mat edge = cardRecognizer.BoundaryDetection2(src);
         edge = cardRecognizer.GrayToGreenRGBA(edge);
         Bitmap dstBitmap = cardRecognizer.MatToBitmap(edge, binding.viewFinder);
 

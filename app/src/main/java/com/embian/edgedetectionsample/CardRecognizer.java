@@ -118,6 +118,11 @@ public class CardRecognizer {
     public Mat BoundaryDetection2(Mat src){
         Mat edge = new Mat();
         Mat hierarchy = new Mat();
+
+        //        todo color channel 별로 thresholding 을 시도하는 것을 추가해 본다.
+//        todo 검은색 물체에 반응하지 않도록 하는 방법을 고민해 본다.
+        
+
         Imgproc.Canny(src, edge, 50, 150);
         Imgproc.blur(edge, edge, new Size(3,3));
 

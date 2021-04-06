@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EdgeDetectionSample</string>
+    <string name="app_name">IDRecognizerSample</string>
     <string name="take_photo">Take photo</string>
     <string name="overlay">overaly</string>
 </resources>

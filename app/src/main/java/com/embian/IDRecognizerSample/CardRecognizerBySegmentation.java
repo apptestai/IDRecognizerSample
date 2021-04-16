@@ -27,7 +27,7 @@ public class CardRecognizerBySegmentation {
     private final int SEGMENTATION_INPUT_HEIGHT = 480;
 
     public CardRecognizerBySegmentation(Context context) throws IOException {
-        module = Module.load(assetFilePath(context, "model0318.pt"));
+        module = Module.load(assetFilePath(context, "mobile_real_2_0.torchscript"));
     }
 
 
@@ -88,7 +88,7 @@ public class CardRecognizerBySegmentation {
                 else if (class_number == 4)
                     color = 0x1F000000;
                 else if (class_number == 5)
-                    color = 0x1F000000;
+                    color = 0x00FFFFFF;
                 else
                     color = 0x00FFFFFF;
 

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         imageAnalysis.setAnalyzer(executor, image -> {
-            Bitmap bitmap  = EdgeAnalyze(image);
+            Bitmap bitmap  = EdgeAnalyze2(image);
             if (bitmap == null) return;
             runOnUiThread(() -> applyAnalyzeResult(bitmap));
             image.close();
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Segmentation network을 사용한 version
     @SuppressLint("UnsafeExperimentalUsageError")
-    private Bitmap EdgeAnalyze(ImageProxy image){
+    private Bitmap EdgeAnalyze2(ImageProxy image){
         final long startTime = SystemClock.elapsedRealtime();
 
         Image srcImage = image.getImage();
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 순수 openCV Version
     @SuppressLint("UnsafeExperimentalUsageError")
-    private Bitmap EdgeAnalyze2(ImageProxy image){
+    private Bitmap EdgeAnalyze(ImageProxy image){
         Image srcImage = image.getImage();
         if (srcImage == null)  return null;
 

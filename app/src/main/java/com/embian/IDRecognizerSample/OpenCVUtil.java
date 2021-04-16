@@ -73,9 +73,12 @@ public class OpenCVUtil {
     public Mat DetectQuad(Mat src){
         Mat edge = new Mat();
         Mat hierarchy = new Mat();
+        int srcArea = src.width() * src.height() ;
 
+//        Imgproc.blur(src, src, new Size(3,3));
+//        Imgproc.erode(src, src, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+//        Imgproc.dilate(src, src, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6)));
         Imgproc.Canny(src, edge, 50, 150);
-        Imgproc.blur(edge, edge, new Size(3,3));
 
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(edge, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -90,7 +93,9 @@ public class OpenCVUtil {
         if (contours.size() > 5) contours.subList(4, contours.size() - 1).clear();
 
         MatOfPoint2f largest2f = null;
+        MatOfPoint2f secondLargest2f = null;
         MatOfPoint largest = new MatOfPoint();
+        MatOfPoint secondLargest = new MatOfPoint();
 
         for (MatOfPoint contour : contours) {
             MatOfInt hull = new MatOfInt();
@@ -107,9 +112,18 @@ public class OpenCVUtil {
             MatOfPoint2f c = new MatOfPoint2f();
             new_contour.convertTo(c, CvType.CV_32FC2);
             Imgproc.approxPolyDP(c, approx, Imgproc.arcLength(c, true) * 0.02, true);
-            if (isRectangle(approx, Imgproc.contourArea(contour))){
-                largest2f = approx;
-                break;
+
+
+            if (srcArea * 0.01 > Imgproc.contourArea(approx))
+                continue;
+
+            if (isRectangle(approx)){
+                if (largest2f == null){
+                    largest2f = approx;
+                }else{
+                    secondLargest2f = approx;
+                    break;
+                }
             }
         }
 
@@ -118,6 +132,12 @@ public class OpenCVUtil {
             List<MatOfPoint> hullList = new ArrayList<>();
             largest2f.convertTo(largest, CvType.CV_32S);
             hullList.add(largest);
+
+            if (secondLargest2f != null){
+                secondLargest2f.convertTo(secondLargest, CvType.CV_32S);
+                hullList.add(secondLargest);
+            }
+
             Imgproc.drawContours(drawing, hullList, 0, new Scalar(255, 255, 255), 2,
                     Imgproc.LINE_8, hierarchy, 0, new Point());
             Imgproc.cvtColor(drawing, edge, Imgproc.COLOR_BGR2GRAY);
@@ -152,20 +172,18 @@ public class OpenCVUtil {
         return (dx1 * dx2 + dy1 * dy2) / Math.sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
     }
 
-    private boolean isRectangle(MatOfPoint2f polygon, double area){
+    private boolean isRectangle(MatOfPoint2f polygon ){
         // Check if the all angles are more than 72.54 degrees (cos 0.3).
-        if (area < 150.0) return false;
-
         if (polygon.rows() != 4) return false;
 
         double maxCosine = 0;
         Point[] approxPoints = polygon.toArray();
 //        Check if the all angles are more than 72.54 degrees (cos 0.3).
         for (int i = 2; i < 5; i++) {
-            double cosine = Math.abs(angle(approxPoints[i % 4], approxPoints[i - 2], approxPoints[i - 1]));
-            maxCosine = Math.max(cosine, maxCosine);
+            double cosine = angle(approxPoints[i % 4], approxPoints[i - 2], approxPoints[i - 1]);
+            maxCosine = Math.min(cosine, maxCosine);
         }
-        return !(maxCosine >= 0.4);
+        return maxCosine <= 0.3;
     }
 
 
